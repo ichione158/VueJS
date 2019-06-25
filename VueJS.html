@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+</head>
+
+<body>
+	<div id="app">
+	  {{ message }}
+	</div>
+
+	<div id="app-3">
+	  <span v-if="seen">Thoắt ẩn thoắt hiện</span>
+	</div>
+
+	<div id="app-4">
+	  <ol>
+	    <li v-for="todo in todos">
+	      {{ todo.text }}
+	    </li>
+	  </ol>
+	</div>
+
+	<!-- Đảo ngược chuỗi ký tự </!-->
+	<div id="app-5">
+	  <p>{{ message }}</p>
+	  <button v-on:click="reverseMessage">Reverse Message</button>
+	</div>
+
+	<!-- Cho phép sửa thông điệp trong message </!-->
+	<div id="app-6">
+	  <p>{{ message }}</p>
+	  <input v-model ="message">
+	</div>
+
+	<div id="app-7">
+	  <p>Những thứ họ mua:</p>
+	  <ol>
+	    <!--
+	      Ở đây chúng ta cung cấp một object "todo" cho mỗi component
+	      "todo-item". Bằng cách này nội dung của từng component trở nên động.
+	      Mỗi component cũng sẽ nhận một thuộc tính "key". Chúng ta sẽ
+	      nói thêm về thuộc tính này sau.
+	    -->
+	    <ichione-item
+	      v-for="item in groceryList"
+	      v-bind:todo="item"
+	      v-bind:key="item.id">
+	    </ichione-item>
+	  </ol>
+	</div>
+
+	<div id="app-8">
+	  <p>{{ foo }}</p>
+	  <!-- foo sẽ không được cập nhật! -->
+	  <button @click="foo = 'baz'">Cập nhật đi chứ</button>
+	</div>
+
+	<!-- Đảo ngược chuỗi với reverse bẳng computed </!-->
+	<div id="app-9">
+		<p>Thông điệp ban đầu: "{{ message }}"</p>
+		<p>Thông điệp đã bị đảo ngược bằng tính toán (computed): "{{ reversedMessage}}"</p>
+	</div>
+
+	<div id="app-10">
+		<p> Tên tôi là: {{ fullname }}</p>
+	</div>
+
+	<div id="app-11">
+		<p> Tên tôi là: {{ fullname }}</p>
+		<button v-on:click="changeSetter"> Name Setter</button>
+	</div>
+
+	<div id="watch-example">
+	  <p>
+	    Hãy hỏi một câu hỏi yes/no:
+	    <input v-model="question">
+	  </p>
+	  <p>{{ answer }}</p>
+	</div>
+	<div id="app-12">
+		<p v-bind:style="styleObject">Inline</p>
+	</div>
+
+	<div id="if-template">
+		<template v-if="ok">
+		  <h1>Anh chàng chăn lợn</h1>
+		  <p>Ơ này, Augustin thân mến ơi</p>
+		  <p>Mọi việc đều như ý, như ý, như ý</p>
+		  <h1 v-show="ichi">Xin chào!</h1>
+		</template>
+		<template v-else>
+			<h1>Ichione vô địch</h1>
+			<p>Tui là ichione</p>
+			<p>I'm a hero</p>
+		</template>
+		<p>How are you doing?</p>
+	</div>
+
+	<div id="app-13">
+		<h1 v-for="item in items">
+			{{ item.name }}
+		</h1>
+	</div>
+
+	<div id="todo-list-example">
+	  <input
+	    v-model="newTodoText"
+	    v-on:keyup.enter="addNewTodo"
+	    placeholder="Thêm việc cần làm"
+	  >
+	  <ul>
+	    <li
+	      is="todo-item"
+	      v-for="(todo, index) in todos"
+	      v-bind:key="todo.id"
+	      v-bind:name="todo"
+	      v-on:remove="todos.splice(index, 1)"
+	    ></li>
+	  </ul>
+	</div>
+
+	<div id="app-14">
+		<button v-on:click="counter++"> Đếm số</button>
+		<h2>Số {{ counter }}</h2>
+	</div>
+
+	<div id="app-15">
+		<button v-on:click="say('Tên tôi là Ichione')">Ichione</button>
+		<button v-on:click="say('I`m a hero')">Superman</button>
+	</div>
+
+</body>
+
+</html>
+
+<script>
+	// In ra một message
+	var app = new Vue({
+	  el: '#app',
+	  data: {
+	    message: 'Do you wanna build a Vue app?'
+	  }
+	})
+</script>
+
+<script>
+	// Hiển thị hay không hiển thị
+	var app3 = new Vue({
+		el: '#app-3',
+		data: {
+			seen: true
+		}
+	})
+</script>
+
+<script>
+	// Xây dựng các chuỗi text bằng todos
+	var app4 = new Vue({
+	  el: '#app-4',
+	  data: {
+	    todos: [
+	      { text: 'Học JavaScript' },
+	      { text: 'Học Vue' },
+	      { text: 'Xây dựng cái gì đó hay ho' }
+	    ]
+	  }
+	})
+</script>
+
+
+<script>
+	// Đảo ngược chuỗi bằng cách sử dụng phân tách ký tự
+	var app5 = new Vue({
+	  el: '#app-5',
+	  data: {
+	    message: 'qua lại khách chờ sông lặng sóng'
+	  },
+	  methods: {
+	    reverseMessage: function () {
+	      this.message = this.message.split(' ').reverse().join(' ')
+	    }
+	  }
+	})
+</script>
+
+<script>
+	var app6 = new Vue({
+	  el: '#app-6',
+	  data: {
+	    message: 'Hãy sửa thông điệp này'
+	  }
+	})
+</script>
+
+<script>
+	// Tạo đối tượng component
+	Vue.component('ichione-item', {
+	  props: ['todo'],
+	  template: '<li>{{ todo.text }}</li>'
+	})
+
+	// Xây dựng dữ liệu sau đó gửi qua props component
+	var app7 = new Vue({
+	  el: '#app-7',
+	  data: {
+	    groceryList: [
+	      { id: 0, text: 'Cà pháo' },
+	      { id: 1, text: 'Mắm tôm' },
+	      { id: 2, text: 'Miễn ăn được là được' }
+	    ]
+	  }
+	})
+</script>
+
+<script>
+	var obj = {
+  foo: 'bar'
+	}
+	// Ngăn không cho chỉnh sửa
+	Object.freeze(obj)
+
+	new Vue({
+	  el: '#app-8',
+	  data: obj
+	})
+</script>
+
+<script>
+	// Computed property
+	var app9 = new Vue({
+	  el: '#app-9',
+	  data: {
+	    message: 'người đông bến đợi thuyền xuôi ngược'
+	  },
+	  computed: {
+	    // một computed getter
+	    reversedMessage: function () {
+	      // `this` trỏ tới đối tượng vm
+	      return this.message.split(' ').reverse().join(' ')
+	    }
+	  }
+	})
+</script>
+
+<script>
+	// Nối 2 chuỗi với computed
+	var app10 = new Vue({
+		el: "#app-10",
+		data: {
+			firstname: "Ichi",
+			lastname: "one"
+		},
+		computed:{
+			fullname: function(){
+				return this.firstname + this.lastname
+			}
+		}
+	})
+</script>
+
+<script>
+	// Computed Setter
+	var app11 = new Vue({
+		el: "#app-11",
+		data: {
+			firstname: "Ichi",
+			lastname: "one"
+		},
+		methods: {
+			changeSetter: function(){
+				this.fullname = 'Super man'
+			}
+		},
+		computed:{
+			fullname: {
+		    // getter
+		    get: function () {
+		      return this.firstname + this.lastname
+		    },
+		    // setter
+		    set: function (newValue) {
+		      alert("Setter name: " + newValue)
+		      var names = newValue.split(' ')
+		      this.firstname = names[0]
+		      this.lastname = names[names.length - 1]
+		    }
+		  }
+		}
+	})
+</script>
+
+<script>
+	var watchExampleVM = new Vue({
+	  el: '#watch-example',
+	  data: {
+	    question: '',
+	    answer: 'Không thể trả lời nếu bạn chưa đặt câu hỏi!'
+	  },
+	  watch: {
+	    // bất cứ lúc nào câu hỏi thay đổi, hàm bên dưới sẽ chạy
+	    question: function (newQuestion, oldQuestion) {
+	      this.answer = 'Đang chờ bạn đặt xong câu hỏi...'
+	      this.getAnswer()
+	    }
+	  },
+	  methods: {
+	    // _.debounce là một hàm do Lodash cung cấp
+	    // Để tìm hiểu rõ hơn cách hoạt động của hàm này,
+	    // bạn có thể truy cập: https://lodash.com/docs#debounce
+	    getAnswer: _.debounce(
+	      function () {
+	        if (this.question.indexOf('?') == -1) {
+	          this.answer = 'Câu hỏi thì thường chứa một dấu "?")'
+	          return
+	        }
+	        this.answer = 'Đang suy nghĩ...'
+	        var vm = this
+	        axios.get('https://yesno.wtf/api')
+	          .then(function (response) {
+	            vm.answer = _.capitalize(response.data.answer)
+	          })
+	          .catch(function (error) {
+	            vm.answer = 'Lỗi! Không thể truy cập API. ' + error
+	          })
+	      },
+	      // Đây là thời gian (đơn vị mili giây) chúng ta đợi người dùng dừng gõ.
+	      1000
+	    )
+	  }
+	})
+</script>
+
+<script>
+	var vm = new Vue({
+	  el: '#app-12',
+	  data: {
+	    styleObject: {
+	    color: 'red',
+	    fontSize: '50px'
+	  }
+	}
+	})
+</script>
+
+<script>
+	var vm = new Vue({
+		el: '#if-template',
+		data: {
+			ok: true,
+			ichi: true
+		}
+	});
+</script>
+
+<script>
+	var vm = new Vue({
+	  el: '#app-13',
+	  data: {
+	    items: [
+	      { name: 'Duy Nguyễn' },
+	      { name: 'Thùy Ngân' },
+	      { name: 'Bò húc' }
+	    ]
+	  }
+	})
+</script>
+
+<script>
+	Vue.component('todo-item', {
+		props: ['name'],
+		template: '\
+			<li>\
+				{{ name.title }}\
+				<button v-on:click="$emit(\'remove\')">X</button>\
+			</li>\
+		'
+	})
+
+	new Vue({
+	  el: '#todo-list-example',
+	  data: {
+	    newTodoText: '',
+	    todos: [
+	      {
+	        id: 1,
+	        title: 'luộc khoai',
+	      },
+	      {
+	        id: 2,
+	        title: 'cùng chị giã gạo',
+	      },
+	      {
+	        id: 3,
+	        title: 'thổi cơm'
+	      },
+	      {
+	        id: 4,
+	        title: 'nhổ cỏ vườn'
+	      }
+	    ],
+	    nextTodoId: 5
+	  },
+	  methods: {
+	    addNewTodo: function () {
+	      this.todos.push({
+	        id: this.nextTodoId++,
+	        title: this.newTodoText
+	      })
+	      this.newTodoText = ''
+	    }
+	  }
+	})
+</script>
+
+<script>
+	new Vue({
+		el: "#app-14",
+		data: {
+			counter: 1
+		}
+	})
+</script>
+
+<script>
+	new Vue ({
+		el: "#app-15",
+		methods: {
+			say: function(message){
+				alert(message)
+			}
+		}
+	})
+</script>
